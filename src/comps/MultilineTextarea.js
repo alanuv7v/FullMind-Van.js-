@@ -7,8 +7,7 @@ const t = van.tags
 const {div, span, button, textarea} = t
 const d = div
 
-
-const MultilineTextarea = (inputTextarea, visibleTextarea) => {
+export default MultilineTextarea = (inputTextarea, visibleTextarea) => {
     inputTextarea.className = 'inputTextarea'
     visibleTextarea.className = 'visibleTextarea'
 
@@ -20,7 +19,7 @@ const MultilineTextarea = (inputTextarea, visibleTextarea) => {
     }
     
     inputTextarea.addEventListener('input', () => {resizeTextarea()})
-    
+
     let main = d(
         inputTextarea,
         visibleTextarea

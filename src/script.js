@@ -1,5 +1,7 @@
 import van from "vanjs-core"
 
+import MultilineTextarea from "./comps/MultilineTextarea.js"
+
 const log = (text) => console.log(text)
 
 const t = van.tags
@@ -68,50 +70,3 @@ const IOI = InOutInterface
 
 van.add(document.body, App())
 
-
-
-import compCSS from "./libs/compCSS"
-
-compCSS("MultilineTextarea", `
-  * {
-    box-sizing: border-box; /* 중요 */
-  }
-  main {
-    position:relative; /* 중요 */
-    width: 100%;
-    height: fit-content;
-    display: flex; /* 중요 */
-    
-  .visibleTextarea {
-    background-color: transparent;
-    font-size: inherit;
-    width: 100%;
-    padding: 1em;
-    overflow-y: hidden;
-    resize: none;
-
-    color: white;
-    background-color: transparent;
-    border:none;
-  }
-  .inputTextarea {
-    background-color: transparent;
-    font-size: inherit;
-    width: 100%;
-    padding: 1em;
-    overflow-y: hidden;
-    resize: none;
-
-    position: absolute;
-    border: none;
-    color: transparent;
-    background-color: transparent;
-    z-index: 1;
-    /* transition: none !important; */ /* 진짜 중요 */
-    caret-color: white;
-  }
-  .inputTextarea::selection {
-    color: white;
-    background: #be9eff;
-  }
-`)
