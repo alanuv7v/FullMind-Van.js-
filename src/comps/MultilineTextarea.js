@@ -1,5 +1,5 @@
 import van from "vanjs-core"
-import compCSS from "./libs/compCSS"
+import compCSS from "../libs/compCSS"
 
 const log = (text) => console.log(text)
 
@@ -7,11 +7,12 @@ const t = van.tags
 const {div, span, button, textarea} = t
 const d = div
 
-export default MultilineTextarea = (inputTextarea, visibleTextarea) => {
-    inputTextarea.className = 'inputTextarea'
-    visibleTextarea.className = 'visibleTextarea'
+export const MultilineTextarea = (inputTextarea, visibleTextarea) => {
+    console.log(inputTextarea.classList)
+    inputTextarea.classList.add('inputTextarea')
+    visibleTextarea.classList.add('visibleTextarea')
 
-    function resizeTextarea() {
+    function resizeTextarea(height) {
         inputTextarea.style.height = "0px" //리셋해서 scrollHeight 다시 계산
         inputTextarea.style.height = (inputTextarea.scrollHeight) + "px"
         visibleTextarea.style.height = inputTextarea.style.height
@@ -20,22 +21,20 @@ export default MultilineTextarea = (inputTextarea, visibleTextarea) => {
     
     inputTextarea.addEventListener('input', () => {resizeTextarea()})
 
-    let main = d(
+    let main = d({class: "MultilineTextarea", style: `
+    position:relative; /* 중요 */
+    width: 100%;
+    height: fit-content;
+    display: flex; /* 중요 */
+    `},
         inputTextarea,
         visibleTextarea
     )
-    resizeTextarea();
 
     compCSS("MultilineTextarea", `
     * {
         box-sizing: border-box; /* 중요 */
     }
-    main {
-        position:relative; /* 중요 */
-        width: 100%;
-        height: fit-content;
-        display: flex; /* 중요 */
-        
     .visibleTextarea {
         background-color: transparent;
         font-size: inherit;

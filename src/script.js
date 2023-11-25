@@ -1,11 +1,11 @@
 import van from "vanjs-core"
 
-import MultilineTextarea from "./comps/MultilineTextarea.js"
+import { MultilineTextarea } from "./comps/MultilineTextarea"
 
 const log = (text) => console.log(text)
 
 const t = van.tags
-const {div, span, button} = t
+const {div, span, button, textarea} = t
 //destructuring 만세!!
 const d = div
 
@@ -62,6 +62,10 @@ const InOutInterface = (data, iteration) => {
     d({style: "padding: 1em;"},
       values_,
     ),
+    MultilineTextarea(
+      textarea('safd'),
+      textarea('safd')
+    )
   )
 }
 

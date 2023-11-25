@@ -5,20 +5,22 @@ export default function compCSS(componentName,styleString) {
         document.compCSS = []
         return
     }
-    if (document.compCSS[componentName]) {
+    if (document.compCSS.includes(componentName)) {
         return
     }
     const style_ = document.createElement('style');
     style_.textContent = styleString;
-    document.head.append(style_)
     
+    document.head.append(style_)
     let rules = document.styleSheets[
         Object.keys(document.styleSheets).length-1
     ].cssRules
+    console.log(rules)
     
     for (let rule of rules) {
         rule.selectorText = "." + componentName + " " + rule.selectorText
     }
+    
     document.compCSS.push(componentName)
 
     return style_
