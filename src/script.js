@@ -18,9 +18,13 @@ const App = () => {
 
   global.ContextMenu = ContextMenu()
 
+  init()
+
   return div({id: 'App'},
     div({innerText: "Diver", class:"main"}
     ),
+    button({value: "global", onclick: () => {console.log(global)}
+    }),
     div({id: "view", class:"main"},
     
       InOutInterface({key: 'testObj', values: testObj}, 10),
@@ -79,48 +83,75 @@ const IOI = InOutInterface
 
 
 
-let menus = createStore(["sdf"])
-menus.watch(m => console.log(m))
-
-let update = createEvent()
-
-menus
-  .on(update, function(prev, added) {return [...prev, added]})
-
-console.log(menus.getState())
-
-const MenuItem = (name, action, children) => {
-  let index = menus.length
+const MenuItem = (menuIndex, name, action, children) => {
+  console.log('At MenuItem init, menus.getState() = ', JSON.stringify(menus.getState(), null, 2) + '. Index is ' + menuIndex)  
   return button({onclick: (event) => {
     action();
-    updateMenus(index, children);
+    update({fromIndex: menuIndex, toAdd: children});
   }}, name
   )
 }
 
+const Menu = (menuItems) => {
+  let index = menus.getState().length
+  let MenuItems = []
+  for (let m of menuItems) {
+    MenuItems.push(MenuItem(index, m.name, m.action, m.children))
+  }
+  return div({style: "display: flex; flex-direction: row"}, MenuItems)
+}
+global.menus = createStore([])
+let menus = global.menus
+
+menus.watch(ms => {
+  if (global.ContextMenu) {
+    while (global.ContextMenu.hasChildNodes()) {
+      global.ContextMenu.firstChild.remove() 
+    }
+    for (let menuItems of ms) {
+      menuItems = Array.isArray(menuItems) ? menuItems : [menuItems]
+      global.ContextMenu.append(Menu(menuItems))
+    }
+  }
+})
+
+let update = createEvent()
+
+menus
+  .on(update, function(prev, props) {
+        let {fromIndex, toAdd} = props
+        console.log('update: ' + JSON.stringify([...prev.slice(0, fromIndex), toAdd], null, 2))
+        return [...prev.slice(0, fromIndex), toAdd]
+      })
+
+  /* 
 function updateMenus(fromIndex, childrenMenus) {
   menus.val = [...menus.val.slice(0, fromIndex), childrenMenus]
   return menus.val
-}
+} */
+
 
 const ContextMenu = () => {
-  let defaultMenu = [
-    button({onclick: (event) => {alert('clicked')}}, 'asdf'),
-    MenuItem('Item', function() {alert('!')}, [MenuItem('child 1',
-    MenuItem('child 2'))])
-  ]
-  console.log(menus)
-  menus.val = [defaultMenu]
-  console.log(menus)
 
-  let derivedMenus = van.derive(() => menus.val)
-  
-  
-  return d({style: "display: flex; flex-direction: row"},
-  derivedMenus.val
-  )
+  return d({style: "position: sticky; bottom: 0px; display: flex; flex-direction: column-reverse; z-index: 2; border: 1px solid white; width: 100%; padding: 0.5em;"})
 }
 
 
 van.add(document.body, App())
 
+function init() {
+
+  let defaultMenu = [
+    {name: 'Item', action: function() {alert('!')}, 
+      children: [
+        {name: 'child 1'}, 
+        {name: 'child 2', action: function() {alert('child 2')}, 
+          children: [{name: 'childrennnn'}]
+        }
+      ]
+    }
+  ]
+
+  update({fromIndex: 0, toAdd: defaultMenu})
+
+}
