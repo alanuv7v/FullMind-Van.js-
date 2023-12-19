@@ -8,7 +8,6 @@ const d = div
 
 
 export function resizeTextarea(inputTextarea, visibleTextarea, height) {
-  console.log("resizing...", inputTextarea, visibleTextarea)
   inputTextarea.style.height = "0px" //리셋해서 scrollHeight 다시 계산
   inputTextarea.style.height = (inputTextarea.scrollHeight) + "px"
   visibleTextarea.style.height = inputTextarea.style.height

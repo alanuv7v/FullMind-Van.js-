@@ -5,9 +5,6 @@ import * as yaml from 'yaml'
 import { MultilineTextarea, resizeTextarea } from "./comps/MultilineTextarea"
 
 
-let head = (async function () {return await import('./data/heads/head_1.yaml')})()
-console.log(head)
-
 //util
 const log = (text) => console.log(text)
 
@@ -18,13 +15,9 @@ const d = div
 
 //global variables
 const global = {}
-/* let head = (async function () {return await import('./data/heads/head_1.yaml')})()
 
-head.then( (h) => { 
-  console.log("HEAD: "+ h)
-  } 
-)
- */
+let head = (async function () {return await import('./data/heads/head_1.yaml')})()
+
 
 let testObj = {
   fruits: {
@@ -37,16 +30,19 @@ let testObj = {
 
 //App
 
-const App = () => {
+const App = (head) => {
 
   global.ContextMenu = ContextMenu()
+
+  console.log("!!!!!", head)
 
   return div({id: 'App'},
     div({innerText: "Diver", class:"main"}
     ),
+    div({id: "container"}),
     div({id: "view", class:"main"},
     
-      InOutInterface({key: 'testObj', values: testObj}, 10)
+      InOutInterface({key: 'testObj', values: head}, 10)
     ),
     global.ContextMenu
   )
@@ -76,7 +72,10 @@ const InOutInterface = (data, iteration) => {
   
   if (typeof data.values != 'object' || data.values == null) {
     values_ = MultilineTextarea(
-      textarea(data.values),
+      textarea({oninput: (event) => {
+        data.values = event.target.value
+        console.log(data, head)
+      }}, data.values),
       textarea(data.values)
     )
     initTargets['MultilineTextarea'].push(values_)
@@ -178,8 +177,66 @@ function init() {
 
   updateContextMenu({fromIndex: 0, toAdd: defaultMenu})
 
+  var sample = {
+    name: "Alice",
+    age: 25,
+    address: {
+      city: "Seoul",
+      country: "South Korea"
+    }
+  };
+  
+  var container = document.getElementById ("container");
+  
+// A function that creates an input element for each property of a nested object
+// obj: the nested object
+// parent: the parent element to append the input elements
+// path: an array of keys that represents the path of the property
+function createInputs (obj, parent, path) {
+  // Loop through each property of the object
+  for (var key in obj) {
+    // If the property is an object, call the function recursively with the new path
+    if (typeof obj[key] === "object") {
+      createInputs (obj[key], parent, path.concat (key));
+    } else {
+      // Otherwise, create an input element and set its value and name attributes
+      var input = document.createElement ("input");
+      input.type = "text";
+      input.value = obj[key];
+      input.name = path.concat (key).join ("."); // The name attribute is the dot-separated path of the property
+      // Add an event listener that updates the object when the input value changes
+      input.addEventListener ("keydown", function (e) {
+        console.log(JSON.stringify(sample, null, 2));
+        // Split the name attribute by dots to get the path of the property
+        var keys = e.target.name.split (".");
+        // Use reduce to access the nested property and assign the new value
+        keys.reduce (function (accumulated, current, i) {
+          // If it is the last key, assign the new value
+          if (i === keys.length - 1) {
+            accumulated[current] = e.target.value;
+          } else {
+            // Otherwise, return the next object
+            return accumulated[current];
+          }
+        }, obj);
+      });
+      // Append the input element to the parent element
+      parent.appendChild (input);
+    }
+  }
+}
+createInputs (sample, container, []);
+
 }
 
 
-van.add(document.body, App())
-init()
+
+head.then((h) => {
+    
+  van.add(document.body, App(head = h.default))
+  init()
+
+})
+
+
+
