@@ -3,54 +3,75 @@
     --vivid: rgba(151, 200, 128, 1);
     --deep: rgba(71, 71, 71, 1);
     --dark: rgba(0, 0, 0, 1);
-    --hilight: rgb(185, 190, 255);
+    --hilight: rgb(108, 125, 255);
 }
   
 * {
   font-size: 14px;
   box-sizing: border-box;
-  background-color: var(--dark);
+
+  overflow: hidden;
   
 }
+
+/* *:hover {
+  border: 2px solid red;
+} */
+
 div, span, button {
 }
+
 #App {
     background-color: var(--dark);
     display: flex;
     flex-direction: column;
     align-items: stretch;
+    
+    position: relative;
+    height: 100vh;
+
 }
+
+#view {
+  overflow: auto;
+  border: 1px solid var(--light);
+  
+  width: 100%;
+  height: 100%;
+
+}
+#background {
+  position: fixed;
+  top: 0px;
+  width: 100vw;
+  height: 100vh;
+  background-color: var(--dark);
+  z-index: -1;
+  transition: none;
+}
+
 body {
     margin: 0px;
+  }
+
+.IOI {
+    width: 100%;
 }
 .IOI:hover {
-    box-shadow: inset 0px 0px 0px 1px var(--hilight);
+    box-shadow: inset 0px 0px 0px 1px var(--light);
 }
 .IOI:not(:has(.IOI:hover)):hover {
-    box-shadow: inset 0px 0px 0px 4px var(--hilight);
+    box-shadow: inset 0px 0px 0px 4px var(--light);
 }
 .main {
     text-align: center;
     background-color: var(--dark);
     color: var(--light);
     /* border: 1px solid var(--light);  */
-    box-shadow: inset 0px 0px 0px 1px var(--light);
+    box-shadow: inset 0px 0px 0px 1px var(--deep);
     /*
     margin-right: -1px;
     margin-bottom: -1px; */
-}
-#view {
-    width: 100%;
-    height: 100%;
-    display: grid;
-    place-items: center;
-}
-
-
-.IOI {
-    border: 1px solid var(--light);
-    width: 100%;
-    height: 100%;
 }
 
 button {
@@ -58,7 +79,7 @@ button {
   font-size: 14px;
   background-color: var(--dark);
   color: var(--light);
-  border: 1px solid var(--light);
+  border: 1px solid var(--deep);
   box-shadow: inset 0px 0px 0px 1px gray;
 
 }
@@ -81,35 +102,6 @@ button:active {
   box-shadow: inset 0px 0px 0px 1px var(--light);
 }
 
-#App {
-  position: relative;
-  height: 100vh;
-  color: white;
-  display: flex;
-  flex-direction: column;
-}
-#content {
-  margin: 10px;
-  flex-grow: 1;
-
-  display: flex;
-  justify-content: center;
-  align-items: center;
-
-  overflow: hidden;
-  position: relative;
-
-  border: 1px solid var(--light);
-}
-#background {
-  position: fixed;
-  top: 0px;
-  width: 100vw;
-  height: 100vh;
-  background-color: var(--dark);
-  z-index: -1;
-  transition: none;
-}
 #keyboard_toolbar {
   position: sticky;
   top: 0px;
@@ -143,4 +135,34 @@ button:active {
     box-sizing: border-box;
     font-size: 16px !important;
     padding: 4px;
+}
+
+    
+.MultilineTextarea {
+  border-left: 1px solid var(--deep);
+}
+
+.IOI:hover > .MultilineTextarea {
+  border-left: 1px solid var(--light);
+}
+
+.MultilineTextarea:hover {
+  border-left: 8px solid var(--light) !important;
+}
+
+::-webkit-scrollbar {
+	width: 6px;
+}
+
+/* 스크롤바 막대 꾸미기 */
+::-webkit-scrollbar-thumb {
+	background-color: white;
+  min-height: 50px;
+	
+}
+
+/* 스크롤바 트랙 꾸미기 */
+::-webkit-scrollbar-track {
+
+	
 }

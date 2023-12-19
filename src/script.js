@@ -1,7 +1,7 @@
 import van from "vanjs-core"
 import { createEvent, createStore } from "effector" 
 
-import { MultilineTextarea } from "./comps/MultilineTextarea"
+import { MultilineTextarea, resizeTextarea } from "./comps/MultilineTextarea"
 
 //util
 const log = (text) => console.log(text)
@@ -18,18 +18,14 @@ const App = () => {
 
   global.ContextMenu = ContextMenu()
 
-  init()
-
   return div({id: 'App'},
     div({innerText: "Diver", class:"main"}
     ),
-    button({value: "global", onclick: () => {console.log(global)}
-    }),
     div({id: "view", class:"main"},
     
-      InOutInterface({key: 'testObj', values: testObj}, 10),
-      global.ContextMenu
-    )
+      InOutInterface({key: 'testObj', values: testObj}, 10)
+    ),
+    global.ContextMenu
   )
 }
 
@@ -42,6 +38,10 @@ let testObj = {
   }
 }
 
+let initTargets = {
+  'MultilineTextarea' : []
+}
+
 const InOutInterface = (data, iteration) => {
   if (iteration < 1) {
     return
@@ -50,10 +50,20 @@ const InOutInterface = (data, iteration) => {
     return
   }
 
+  let key_ = MultilineTextarea(
+    textarea({style: "color: #8adfd8"}, data.key),
+    textarea({style: "color: #8adfd8"}, data.key)
+  )
+  initTargets['MultilineTextarea'].push(key_)
+
   let values_ = []
   
   if (typeof data.values != 'object' || data.values == null) {
-    values_ = d({style: "color: #fab189;"}, data.values)
+    values_ = MultilineTextarea(
+      textarea(data.values),
+      textarea(data.values)
+    )
+    initTargets['MultilineTextarea'].push(values_)
   } else {
     let children = []
     
@@ -68,13 +78,9 @@ const InOutInterface = (data, iteration) => {
   iteration--
 
   return div({class: "main IOI"}, 
-    d({style: "color: #8adfd8"}, data.key),
-    d({style: "padding: 1em;"},
-      values_,
-    ),
-    MultilineTextarea(
-      textarea('safd'),
-      textarea('safd')
+    key_,
+    d({style: "padding-left: 1em; padding-bottom: 1em; padding-right: 1em;"},
+      values_
     )
   )
 }
@@ -87,7 +93,7 @@ const MenuItem = (menuIndex, name, action, children) => {
   console.log('At MenuItem init, menus.getState() = ', JSON.stringify(menus.getState(), null, 2) + '. Index is ' + menuIndex)  
   return button({onclick: (event) => {
     action();
-    update({fromIndex: menuIndex, toAdd: children});
+    updateContextMenu({fromIndex: menuIndex, toAdd: children});
   }}, name
   )
 }
@@ -115,12 +121,12 @@ menus.watch(ms => {
   }
 })
 
-let update = createEvent()
+let updateContextMenu = createEvent()
 
 menus
-  .on(update, function(prev, props) {
+  .on(updateContextMenu, function(prev, props) {
         let {fromIndex, toAdd} = props
-        console.log('update: ' + JSON.stringify([...prev.slice(0, fromIndex), toAdd], null, 2))
+        console.log('update ContextMenu: ' + JSON.stringify([...prev.slice(0, fromIndex), toAdd], null, 2))
         return [...prev.slice(0, fromIndex), toAdd]
       })
 
@@ -133,11 +139,9 @@ function updateMenus(fromIndex, childrenMenus) {
 
 const ContextMenu = () => {
 
-  return d({style: "position: sticky; bottom: 0px; display: flex; flex-direction: column-reverse; z-index: 2; border: 1px solid white; width: 100%; padding: 0.5em;"})
+  return d({style: "bottom: 0px; display: flex; flex-direction: column-reverse; z-index: 2; border: 1px solid white; width: 100%; padding: 0.5em;"})
 }
 
-
-van.add(document.body, App())
 
 function init() {
 
@@ -152,6 +156,14 @@ function init() {
     }
   ]
 
-  update({fromIndex: 0, toAdd: defaultMenu})
+  for (let mt of initTargets['MultilineTextarea']) {
+    resizeTextarea(mt.children[0], mt.children[1])
+  }
+
+  updateContextMenu({fromIndex: 0, toAdd: defaultMenu})
 
 }
+
+
+van.add(document.body, App())
+init()
