@@ -1,14 +1,12 @@
 import van from "vanjs-core"
 import compCSS from "../libs/compCSS"
 
-const log = (text) => console.log(text)
 
 const t = van.tags
 const {div, span, button, textarea} = t
 const d = div
 
 export const MultilineTextarea = (inputTextarea, visibleTextarea) => {
-    console.log(inputTextarea.classList)
     inputTextarea.classList.add('inputTextarea')
     visibleTextarea.classList.add('visibleTextarea')
 
