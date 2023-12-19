@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@modyfi/vite-plugin-yaml": "^1.0.4",
     "vite": "^4.1.0"
   },
   "dependencies": {

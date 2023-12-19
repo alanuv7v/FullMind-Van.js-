@@ -1,7 +1,12 @@
 import van from "vanjs-core"
 import { createEvent, createStore } from "effector" 
 
+import * as yaml from 'yaml'
 import { MultilineTextarea, resizeTextarea } from "./comps/MultilineTextarea"
+
+
+let head = (async function () {return await import('./data/heads/head_1.yaml')})()
+console.log(head)
 
 //util
 const log = (text) => console.log(text)
@@ -13,6 +18,24 @@ const d = div
 
 //global variables
 const global = {}
+/* let head = (async function () {return await import('./data/heads/head_1.yaml')})()
+
+head.then( (h) => { 
+  console.log("HEAD: "+ h)
+  } 
+)
+ */
+
+let testObj = {
+  fruits: {
+    apple: {
+      color: 'red',
+      taste: ['sweet', 'sour']
+    }
+  }
+}
+
+//App
 
 const App = () => {
 
@@ -29,14 +52,7 @@ const App = () => {
   )
 }
 
-let testObj = {
-  fruits: {
-    apple: {
-      color: 'red',
-      taste: ['sweet', 'sour']
-    }
-  }
-}
+
 
 let initTargets = {
   'MultilineTextarea' : []
