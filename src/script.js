@@ -28,25 +28,6 @@ let testObj = {
   }
 }
 
-//App
-
-const App = (head) => {
-
-  global.ContextMenu = ContextMenu()
-
-  console.log("!!!!!", head)
-
-  return div({id: 'App'},
-    div({innerText: "Diver", class:"main"}
-    ),
-    div({id: "container"}),
-    div({id: "view", class:"main"},
-    
-      InOutInterface({key: 'testObj', values: head}, 10)
-    ),
-    global.ContextMenu
-  )
-}
 
 
 
@@ -54,7 +35,7 @@ let initTargets = {
   'MultilineTextarea' : []
 }
 
-const InOutInterface = (data, iteration) => {
+const InOutInterface = (key, data, iteration) => {
   if (iteration < 1) {
     return
   }
@@ -63,31 +44,30 @@ const InOutInterface = (data, iteration) => {
   }
 
   let key_ = MultilineTextarea(
-    textarea({style: "color: #8adfd8"}, data.key),
-    textarea({style: "color: #8adfd8"}, data.key)
+    textarea({style: "color: #8adfd8"}, key),
+    textarea({style: "color: #8adfd8"}, key)
   )
   initTargets['MultilineTextarea'].push(key_)
 
   let values_ = []
+
+  console.log(data)
   
-  if (typeof data.values != 'object' || data.values == null) {
+  if (typeof data != 'object' || data == null) { // value is not Object, or it is null
     values_ = MultilineTextarea(
       textarea({oninput: (event) => {
-        data.values = event.target.value
+        data = event.target.value
         console.log(data, head)
-      }}, data.values),
-      textarea(data.values)
+      }}, data),
+      textarea(data)
     )
     initTargets['MultilineTextarea'].push(values_)
-  } else {
+
+  } else { // value is Object
     let children = []
     
-    for (let e of Object.entries(data.values)) {
-      children.push({key: e[0], values: e[1]})
-    }
-    
-    for (let child of children) {
-      values_.push(IOI(child, iteration))
+    for (let key in data) {
+      values_.push(IOI(key, nestedObj(data, [key]), iteration))
     }
   }
   iteration--
@@ -99,8 +79,12 @@ const InOutInterface = (data, iteration) => {
   let foldArrow = d({style: "margin-left: auto"}, "\u25BD")
 
   function onIOIwheel(event) {
+    
+    if (!event.shiftKey) {return}
+
     event.preventDefault()
     event.stopPropagation()
+
     if (event.deltaY < 0) {//up, fold
         valueWrapper.style.display = "none";
         foldArrow.innerText = "\u25C1"
@@ -252,13 +236,59 @@ createInputs (sample, container, []);
 }
 
 
+function nestedObj(obj, props, value) {
+    if (!props) return obj;
+    let prop;
+    for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
+      prop = props[i];
+      let candidate = obj[prop];
+      if (candidate !== undefined) {
+        obj = candidate;
+      } else {
+        break;
+      }
+    }
+    if (value) {
+        obj[props[i]] = value;
+        return obj
+    }
+    return obj[props[i]]
+}
 
+//nestObj 사용 예시:
+/* var obj = {
+    foo: {
+        bar: {
+        baz: 'x'
+        }
+    }
+};
+
+nestedObj(obj, ["foo", "bar", "baz"], 'y'); */
+
+
+//App
+
+const App = (head) => {
+    
+    let seed = InOutInterface('testObj', head, 10)
+  
+    global.ContextMenu = ContextMenu()
+  
+    return div({id: 'App'},
+      div({innerText: "Diver", class:"main"}),
+      div({id: "container"}),
+      div({id: "view", class:"main"},
+          seed,
+      ),
+      global.ContextMenu
+    )
+}
+  
 head.then((h) => {
     
   van.add(document.body, App(head = h.default))
   init()
 
 })
-
-
 
