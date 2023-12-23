@@ -5,6 +5,11 @@ import * as yaml from 'yaml'
 import { MultilineTextarea, resizeTextarea } from "./comps/MultilineTextarea"
 
 
+/* 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+codeanywhere에서 변경사항 있을 시 커밋 뿐만 아니라 push도 꼭 해야한다. 하고나서 깃허브에서 잘됬는지 한번더 확인할것
+*/
+
 //util
 const log = (text) => console.log(text)
 
