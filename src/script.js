@@ -36,6 +36,8 @@ let initTargets = {
 }
 
 const InOutInterface = (key, data, iteration) => {
+  //if ('name' in data) data.name = 'asdf'; console.log(data, head); return
+  //proved that the data property is referencing prop in head. But still input elems cannot change head's prop.
   if (iteration < 1) {
     return
   }
@@ -49,10 +51,9 @@ const InOutInterface = (key, data, iteration) => {
   )
   initTargets['MultilineTextarea'].push(key_)
 
+  //!!!!!!!! textarea에서 set할 때도 head에서부터 nestedObj 함수로 안에 있는 값을 바꿔야 한다. Path가 너무 길어지는 비효율의 발생은 Dictionary를 만들고, 사전에 고유명사가 등록되면 고유명사에 nested된 prop은 고유명사 obj 안에만 들어있게 하자. 아니면 진짜 head를 listify해버리자. 쉬운 레퍼런스, shallow copy 위해.
+  //setting values_
   let values_ = []
-
-  console.log(data)
-  
   if (typeof data != 'object' || data == null) { // value is not Object, or it is null
     values_ = MultilineTextarea(
       textarea({oninput: (event) => {
@@ -64,8 +65,6 @@ const InOutInterface = (key, data, iteration) => {
     initTargets['MultilineTextarea'].push(values_)
 
   } else { // value is Object
-    let children = []
-    
     for (let key in data) {
       values_.push(IOI(key, nestedObj(data, [key]), iteration))
     }
