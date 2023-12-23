@@ -92,11 +92,33 @@ const InOutInterface = (data, iteration) => {
   }
   iteration--
 
-  return div({class: "main IOI"}, 
-    key_,
-    d({style: "padding-left: 1em; padding-bottom: 1em; padding-right: 1em;"},
-      values_
+  let valueWrapper = d({style: "padding-left: 1em; padding-bottom: 1em; padding-right: 1em;"},
+        values_
     )
+
+  let foldArrow = d({style: "margin-left: auto"}, "\u25BD")
+
+  function onIOIwheel(event) {
+    event.preventDefault()
+    event.stopPropagation()
+    if (event.deltaY < 0) {//up, fold
+        valueWrapper.style.display = "none";
+        foldArrow.innerText = "\u25C1"
+    }
+    else { //open
+        valueWrapper.style.display = "block";
+        foldArrow.innerText = "\u25BD"
+    }
+  }
+
+
+
+  return div({class: "main IOI", onwheel: () => onIOIwheel(event)}, 
+    d({style: "display:flex; flex-direction: row"},
+        key_,
+        foldArrow
+    ),
+    valueWrapper
   )
 }
 
