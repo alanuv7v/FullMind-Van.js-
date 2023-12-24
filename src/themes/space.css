@@ -12,11 +12,14 @@
 
   overflow: hidden;
   
+  color: var(--light);
+  
 }
-
-/* *:hover {
-  border: 2px solid red;
-} */
+*:focus {
+  outline: 1px solid var(--light);
+  outline: none;
+  box-shadow: inset 0px 0px 0px 1px var(--light);
+}
 
 div {
     text-align: left;
@@ -80,7 +83,7 @@ body {
 button, input, select {
   
   font-size: 14px;
-  padding: 0.2em 0.5em 0.2em 0.5em;
+  padding: 0.5em 0.5em 0.5em 0.5em;
 
   background-color: var(--dark);
   color: var(--light);
@@ -114,11 +117,6 @@ button:focus {
   border: 1px solid var(--light);
   box-shadow: inset 0px 0px 0px 1px var(--light);
   box-shadow: inset 0px 0px 0px 1px yellow, inset 1px 0px 0px 1px blue;
-}
-*:focus {
-  outline: 1px solid var(--light);
-  outline: none;
-  box-shadow: inset 0px 0px 0px 1px var(--light);
 }
 
 #keyboard_toolbar {
