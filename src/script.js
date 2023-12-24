@@ -40,20 +40,37 @@ let initTargets = {
   'MultilineTextarea' : []
 }
 
-const InOutInterface = (key, data, iteration) => {
+const InOutInterface = (path=[], head, iteration) => {
   //if ('name' in data) data.name = 'asdf'; console.log(data, head); return
   //proved that the data property is referencing prop in head. But still input elems cannot change head's prop.
   if (iteration < 1) {
     return
   }
-  if (!data) {
+  if (!head) {
     return
   }
 
+  let key = path[path.length-1]
+  let data = nestedObj(head, path)
+  console.log(key, data)
+
+  let prevKey = key
+
   let key_ = MultilineTextarea(
-    textarea({style: "color: #8adfd8"}, key),
+    textarea({style: "color: #8adfd8", oninput: (event) => {
+        let originalValue = (nestedObj(head, path))
+        nestedObj(head, path.slice(0, -1), 
+            {...nestedObj(head, path.slice(0, -1))/* siblings */,
+            [event.target.value]: originalValue}
+        )
+        path = [...path.slice(0, -1), event.target.value]
+        if (prevKey) nestedObj(head, [...path.slice(0, -1), prevKey], null, "delete")
+        prevKey = event.target.value
+        console.log(nestedObj(head, path), head, prevKey)
+    }}, key),
     textarea({style: "color: #8adfd8"}, key)
   )
+
   initTargets['MultilineTextarea'].push(key_)
 
   //!!!!!!!! textarea에서 set할 때도 head에서부터 nestedObj 함수로 안에 있는 값을 바꿔야 한다. Path가 너무 길어지는 비효율의 발생은 Dictionary를 만들고, 사전에 고유명사가 등록되면 고유명사에 nested된 prop은 고유명사 obj 안에만 들어있게 하자. 아니면 진짜 head를 listify해버리자. 쉬운 레퍼런스, shallow copy 위해.
@@ -62,8 +79,8 @@ const InOutInterface = (key, data, iteration) => {
   if (typeof data != 'object' || data == null) { // value is not Object, or it is null
     values_ = MultilineTextarea(
       textarea({oninput: (event) => {
-        data = event.target.value
-        console.log(data, head)
+        nestedObj(head, path, event.target.value)
+        console.log(nestedObj(head, path), head)
       }}, data),
       textarea(data)
     )
@@ -71,7 +88,7 @@ const InOutInterface = (key, data, iteration) => {
 
   } else { // value is Object
     for (let key in data) {
-      values_.push(IOI(key, nestedObj(data, [key]), iteration))
+      values_.push(IOI([...path, key], head, iteration))
     }
   }
   iteration--
@@ -240,7 +257,7 @@ createInputs (sample, container, []);
 }
 
 
-function nestedObj(obj, props, value) {
+function nestedObj(obj, props, value, command=false) {
     if (!props) return obj;
     let prop;
     for (var i = 0, iLen = props.length - 1; i < iLen; i++) {
@@ -255,6 +272,13 @@ function nestedObj(obj, props, value) {
     if (value) {
         obj[props[i]] = value;
         return obj
+    }
+    switch (command) {
+        case "delete":
+            delete obj[props[i]]
+            return
+        default: 
+            break
     }
     return obj[props[i]]
 }
@@ -275,7 +299,7 @@ nestedObj(obj, ["foo", "bar", "baz"], 'y'); */
 
 const App = (head) => {
     
-    let seed = InOutInterface('testObj', head, 10)
+    let seed = InOutInterface(['thots'], head, 10)
   
     global.ContextMenu = ContextMenu()
   
